@@ -17,6 +17,7 @@ export default class Contract {
   _createClient() {
     this.privateKey = CryptoUtils.generatePrivateKey()
     this.publicKey = CryptoUtils.publicKeyFromPrivateKey(this.privateKey)
+    this.address = LocalAddress.fromPublicKey(this.publicKey).toString()
     this.client = new Client(
       'default',
       'ws://127.0.0.1:46657/websocket',
@@ -27,6 +28,8 @@ export default class Contract {
       console.error('Error on connect to client', msg)
       console.warn('Please verify if loom command is running')
     })
+
+    console.log("init client success!!!")
   }
 
   _createCurrentUserAddress() {
@@ -38,14 +41,22 @@ export default class Contract {
   }
 
   async _createContractInstance() {
+    console.log(this.privateKey)
+    console.log(this.address)
     const networkId = await this._getCurrentNetwork()
+    console.log(networkId)
     this.currentNetwork = SimpleStore.networks[networkId]
+    console.log(this.currentNetwork)
+    const loomContractAddress = await client.getContractAddressAsync('SimpleStore')
+    const contractAddress = CryptoUtils.bytesToHexAddr(loomContractAddress.local.bytes)
+    const ABI = SimpleStore.abi
 
+    console.log(ABI)
     if (!this.currentNetwork) {
       throw Error('Contract not deployed on DAppChain')
     }
 
-    const ABI = SimpleStore.abi
+   
     this.simpleStoreInstance = new this.web3.eth.Contract(ABI, this.currentNetwork.address, {
       from: this.currentUserAddress
     })

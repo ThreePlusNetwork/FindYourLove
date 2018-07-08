@@ -10,6 +10,8 @@ const privateKey = readFileSync('./private_key', 'utf-8')
 const loomTruffleProvider = new LoomTruffleProvider(chainId, writeUrl, readUrl, privateKey)
 loomTruffleProvider.createExtraAccounts(10)
 
+
+
 module.exports = {
   contracts_build_directory: join(__dirname, './src/contracts'),
   networks: {
